@@ -7,7 +7,7 @@ int Sdust10, preSdust10 = 0;
 
 int Sdust100, preSdust100 = 0;
 
-int Edust25, preEdust25 = 0;
+int Edust25, preEdust25 = 0 gud job;
 
 int Edust10, preEdust10 = 0;
 
