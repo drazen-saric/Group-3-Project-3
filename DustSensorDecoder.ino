@@ -1,7 +1,7 @@
 // Declaration of all necesairy variables
 char dustMsg[30];
 
-int Sdust25, preSdust25 = 0;
+int Sdust25, preSdust25 = 100;
 
 int Sdust10, preSdust10 = 0;
 
