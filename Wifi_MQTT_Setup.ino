@@ -42,6 +42,8 @@ void setup_wifi() { // Sets up initial WiFi and provides feedback to the user
 
   //MQTT Setup
   client.setServer(MQTT_Server, 1883);
+
+  check_connect();
 }
 
 
@@ -63,9 +65,6 @@ void reconnect() {
 
     if (client.connect(clientId.c_str())) {
       Serial.println("Connected!");
-
-      client.subscribe(LAT_Top);
-      client.subscribe(LNG_Top);
 
     }
     else {
