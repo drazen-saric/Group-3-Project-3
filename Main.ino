@@ -1,42 +1,77 @@
 #define UART_LDS 32
 
 #define DHTPIN 33
-#define DHTPWR 19
+
+//Constants
+//In Minutes
+const int CycleTime = 5;
+const int SleepTime = 20;
+
+//In Seconds
+const int MesureDelay = 2;
+
+const int LightLimit = 150;
 
 
-void setup()
-{
-  
+void setup() {
   //Serial Monitor
   Serial.begin(115200);
 
-    //Dust Serial
+  //LDS Serial
   Serial1.begin(9600, SERIAL_8N1, UART_LDS, -1);
 
+  //DHT11
   pinMode(DHTPIN, INPUT);
-  pinMode(DHTPWR, OUTPUT);
 
-  pinMode(32, INPUT);
+  //Deep sleep timer
+  esp_sleep_enable_timer_wakeup(SleepTime * 60 * 1000 * 1000);
+
+  connect_wifi();
+
+  setup_Time();
 
   setup_DHT();
 
-  setup_wifi();
 }
 
+void loop() {
+  //If light below limit, sleep for SleepTime
+  if (Photo_read() < LightLimit){
+    Serial.print("Not good light conditions, enetring deep sleep (");
+    Serial.print(SleepTime);
+    Serial.print(" min)");
+    esp_deep_sleep_start();
+  }
+  else {
+    Serial.println("Good light conditions, getting values...");
+  }
 
-void loop()
-{
+  delay(MesureDelay * 1000);
 
-  check_connect();
-  delay(1000);
+  get_Time();
 
-  //LDS_read();
-  //delay(1000);
+  delay(MesureDelay * 1000);
 
-  //DHT_read();
-  //delay(1000);
+  LDS_read();
 
-  Photo_read();
-  delay(1000);
+  delay(MesureDelay * 1000);
+
+  DHT_read();
+
+  delay(MesureDelay * 1000);
+
+  read_MAC();
+
+  delay(MesureDelay * 1000);
+
+  //When all mesurements are collected, WiFi connection is confirmed and the data send is initiated
+  check_wifi();
+
+  Serial.println("Cycle complete, waiting 5m before next cycle...");
+  //delay(CycleTime * 60 * 1000);
+  delay(10000);
+
+
+
 
 }
