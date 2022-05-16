@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewpoint" content="width=device-width, initial-scale=1.0"/>
+</head>
+<style>
+.header {
+  padding: 60px;
+  text-align: center;
+  background-image: url("https://wallpaperaccess.com/full/5375535.jpg");
+  background-repeat:no-repeat;
+  color: white;
+}
+.navbar {
+  display: flex;
+  background-color: #400080;
+}
+.navbar a {
+  color: white;
+  padding: 14px 20px;
+  text-decoration: none;
+  text-align: center;
+  transition: padding 2s;
+}
+
+.navbar a:hover {
+   padding: 14px 30%;
+   background-color:  #a64dff;
+   color: white
+
+}
+table, th, td {
+  border: 1px white;
+  border-collapse: collapse;
+  border-spacing: 20px ;
+  padding: 10px;
+}
+th, td {
+   font-size: 30px;
+   font-family: Georgia;
+.center {
+  margin-left: auto;
+  margin-right: auto;
+}
+</style>
+<body style="background: radial-gradient(transparent, black); background-color:#e3b5e3; margin: 0">
+<div class="header">
+  <h1>IS ROOM GUD?!</h1>
+  <p>lesgooo</p>
+</div>
+<div class="navbar">
+  <a href="https://imgur.com/ltbqhG3">Rooms layout</a>
+  <a href="https://www.accuweather.com/en/dk/aarhus/124594/weather-forecast/124594">Weather</a>
+  <a href="https://www.condair.com/humidifiernews/blog-overview/what-should-the-humidity-be-in-a-classroom-and-why">Ideal humidity level</a>
+  <a href="https://www.epa.gov/indoor-air-quality-iaq/indoor-particulate-matter">About PM</a>
+</div>
+    <table id="myTable" style="margin-left:auto;margin-right:auto;">
+        <tr>
+          {% for header in headings %}
+          <th>{{ header }}</th>
+          {% endfor %}
+        </tr>
+      {% for row in data %}
+        <tr>
+            {% for cell in row %}
+            <td>{{ cell }}</td>
+            {% endfor %}
+        </tr>
+      {% endfor %}
+    </table>
+</body>
+</html>
