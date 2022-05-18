@@ -9,6 +9,7 @@ const char* SSID = "ITEK 2nd";
 const char* Password = "Four_Sprints_F21v";
 
 const char* MQTT_Server = "broker.emqx.io";  //CHANGE TO LOCAL BROKER!!!
+const char* Sync = "group3/22/sync";
 
 //VPN Credentials
 const char* hostName = "robo_bitch_32";
@@ -54,6 +55,7 @@ void connect_wifi() { // Connects WiFi and MQTT
 
     //MQTT Setup
     client.setServer(MQTT_Server, 1883);
+    client.setCallback(callback);
 
   }
   else {
@@ -63,6 +65,8 @@ void connect_wifi() { // Connects WiFi and MQTT
 }
 
 void check_wifi() {
+
+  //If no WiFi, increment pointer of local storage
   if ((WiFi.status() != WL_CONNECTED)) {
     connect_wifi();
     Serial.println("Wifi still unavailable, incrementing local storage...");
@@ -87,6 +91,30 @@ void check_mqtt() {
   }
 }
 
+void connect_mqtt_initial() {
+  while (!client.connected()) {
+    Serial.println("Attempting MQTT connection...");
+
+    String clientId = "ESP8266Client-"; // Create a random client ID
+    clientId += String(random(0xffff), HEX);
+
+    if (client.connect(clientId.c_str())) {
+      Serial.println("Connected!");
+
+      client.subscribe(Sync);
+
+    }
+    else {
+      Serial.print("Failed reconnect, ERR_CODE = ");
+      Serial.print(client.state());
+      Serial.println("Trying again in 2 Seconds...");
+      delay(2000);
+
+
+
+    }
+  }
+}
 
 void connect_mqtt() {
   int counter = 0;
@@ -103,6 +131,7 @@ void connect_mqtt() {
 
     }
     else {
+      //If WiFi available, but MQTT can't connect, increment local storage
       Serial.print("Failed reconnect, ERR_CODE = ");
       Serial.print(client.state());
       Serial.println("Trying again in 2 Seconds...");
@@ -160,7 +189,7 @@ void read_MAC() {
 }
 
 
-
+//Function converts numeric float values to char array for sending over MQTT
 void DataToMsg(const char* Topic, float Value) {
 
   String temp = String(Value);
@@ -172,6 +201,12 @@ void DataToMsg(const char* Topic, float Value) {
   client.publish(Topic, Pub_Msg);
 }
 
+//Used for publishing char array messages
 void PublishMsg(const char* Topic, const char* Msg) {
   client.publish(Topic, Msg);
+}
+
+//Used for checking callback (used for sync)
+void client_loop() {
+  client.loop();
 }
