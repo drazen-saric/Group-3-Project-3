@@ -15,6 +15,7 @@ void LDS_read() {
 
     }
 
+    //Calculate dust value
     LDS_PM25 = (dustMsg[4] * 256) + dustMsg[5];
 
     Serial.println("");
@@ -23,6 +24,7 @@ void LDS_read() {
     Serial.println(" ug/m3");
     Serial.println("");
 
+    //Store value to local storage
     store_PM25(LDS_PM25);
 
   }
