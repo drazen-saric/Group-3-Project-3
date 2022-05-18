@@ -29,8 +29,8 @@ void DHT_read() {
   Serial.println(hum);
   Serial.println("");
 
+  //Store values to local storage
   store_Temp(temp);
   store_Humid(hum);
 
 }
-
