@@ -12,6 +12,7 @@ float Photo_read() {
 
   store_Light(PhotoVal);
 
+  //Return used for sleep check
   return PhotoVal;
 
 }
