@@ -10,7 +10,11 @@ const int SleepTime = 20;
 //In Seconds
 const int MesureDelay = 2;
 
+//Minimum light level for Sleep Mode
 const int LightLimit = 150;
+
+//Used for syncing with the database
+int SyncVal = 0;
 
 
 void setup() {
@@ -23,10 +27,13 @@ void setup() {
   //DHT11
   pinMode(DHTPIN, INPUT);
 
-  //Deep sleep timer
+  //Sleep timer
   esp_sleep_enable_timer_wakeup(SleepTime * 60 * 1000 * 1000);
 
   connect_wifi();
+
+  ////Used for syncing with the database
+  connect_mqtt_initial();
 
   setup_Time();
 
@@ -35,43 +42,54 @@ void setup() {
 }
 
 void loop() {
-  //If light below limit, sleep for SleepTime
-  if (Photo_read() < LightLimit){
-    Serial.print("Not good light conditions, enetring deep sleep (");
-    Serial.print(SleepTime);
-    Serial.print(" min)");
-    esp_deep_sleep_start();
+  //Waiting for database to send a "ready to recieve" message
+  if ( SyncVal != 1 ) {
+    client_loop();
   }
   else {
-    Serial.println("Good light conditions, getting values...");
+    Serial.println("Synchronization Success!");
+
+    //If light below limit, sleep for SleepTime
+    if (Photo_read() < LightLimit) {
+      Serial.print("Bad light conditions, enetring sleep mode(");
+      Serial.print(SleepTime);
+      Serial.print(" min)");
+      delay(1000);
+
+      esp_light_sleep_start();
+
+    }
+    else {
+      Serial.println("Good light conditions, getting values...");
+
+      delay(MesureDelay * 1000);
+
+      get_Time();
+
+      delay(MesureDelay * 1000);
+
+      LDS_read();
+
+      delay(MesureDelay * 1000);
+
+      DHT_read();
+
+      delay(MesureDelay * 1000);
+
+      read_MAC();
+
+      delay(MesureDelay * 1000);
+
+      //When all mesurements are collected, WiFi connection is confirmed and the data send is initiated
+      check_wifi();
+
+      Serial.println("Cycle complete, waiting 5m before next cycle...");
+      delay(CycleTime * 60 * 1000);
+      
+    }
+
+
   }
-
-  delay(MesureDelay * 1000);
-
-  get_Time();
-
-  delay(MesureDelay * 1000);
-
-  LDS_read();
-
-  delay(MesureDelay * 1000);
-
-  DHT_read();
-
-  delay(MesureDelay * 1000);
-
-  read_MAC();
-
-  delay(MesureDelay * 1000);
-
-  //When all mesurements are collected, WiFi connection is confirmed and the data send is initiated
-  check_wifi();
-
-  Serial.println("Cycle complete, waiting 5m before next cycle...");
-  //delay(CycleTime * 60 * 1000);
-  delay(10000);
-
-
 
 
 }
