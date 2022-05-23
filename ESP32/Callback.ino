@@ -1,7 +1,3 @@
-long lastMsg = 0;
-char msg[50];
-int value = 0;
-
 void callback(char* topic, byte* payload, unsigned int length) {
 
   Serial.print("Message arrived [");
@@ -15,6 +11,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
   Serial.println();
 
   if ((char)payload[0] == '0') {
+    PublishMsg("group3/22/sync", "Sync Success!");
     SyncVal = 1;
   }
 
