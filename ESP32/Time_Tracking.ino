@@ -53,7 +53,7 @@ void get_Time() {
     }
 
     //Update the local time (char values)
-    char LocalStamp[5];
+    char LocalStamp[6] = {};
 
     String temp1 = String(LocalHr);
     char timeHourLocal[temp1.length() + 1];
@@ -107,7 +107,7 @@ void get_Time() {
     Serial.print("Time: ");
 
     //Save to local char time
-    char LocalStamp[5];
+    char LocalStamp[6] = {};
 
     strcpy(LocalStamp, timeHour);
     strcat(LocalStamp, Separation);
