@@ -92,6 +92,7 @@ void check_mqtt() {
 }
 
 void connect_mqtt_initial() {
+  int counter = 0;
   while (!client.connected()) {
     Serial.println("Attempting MQTT connection...");
 
@@ -102,6 +103,7 @@ void connect_mqtt_initial() {
       Serial.println("Connected!");
 
       client.subscribe(Sync);
+      PublishMsg("group3/22/sync", "Waiting for sync message...");
 
     }
     else {
@@ -110,8 +112,16 @@ void connect_mqtt_initial() {
       Serial.println("Trying again in 2 Seconds...");
       delay(2000);
 
+      counter += 1;
+
+      if (counter == 2) {
+        counter = 0;
+        Serial.println("MQTT connect failed after 3 attempts, will atempt to connect later");
+        break;
 
 
+
+      }
     }
   }
 }
@@ -126,6 +136,8 @@ void connect_mqtt() {
 
     if (client.connect(clientId.c_str())) {
       Serial.println("Connected! Sending data...");
+
+      client.subscribe(Sync);
 
       data_send();
 
@@ -149,6 +161,12 @@ void connect_mqtt() {
   }
 }
 
+void diconnect_mqtt() {
+  client.disconnect();
+  Serial.println("Client Disconnected!");
+  Serial.println();
+}
+
 void read_MAC() {
   int NumOfNets = WiFi.scanNetworks();
 
@@ -158,6 +176,7 @@ void read_MAC() {
     temp.toCharArray(Mac_Addr, temp.length() + 1);
 
     Serial.println("Closest AP is Not Available");
+    Serial.println("");
 
     store_MAC(Mac_Addr);
   }
@@ -179,6 +198,7 @@ void read_MAC() {
           Serial.println(WiFi.BSSIDstr(Strongest));
           Serial.print("With a signal of ");
           Serial.println(WiFi.RSSI(Strongest));
+          Serial.println("");
 
           store_MAC(Mac_Addr);
 
@@ -203,7 +223,13 @@ void DataToMsg(const char* Topic, float Value) {
 
 //Used for publishing char array messages
 void PublishMsg(const char* Topic, const char* Msg) {
-  client.publish(Topic, Msg);
+  String temp = String(Msg);
+
+  char Pub_Msg[temp.length() + 1] = {};
+
+  temp.toCharArray(Pub_Msg, temp.length() + 1);
+
+  client.publish(Topic, Pub_Msg);
 }
 
 //Used for checking callback (used for sync)
