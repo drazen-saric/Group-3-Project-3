@@ -1,12 +1,14 @@
 import paho.mqtt.client as mqtt
 import mariadb, sys
 
-my_list=[]
+my_list=[] #dynamic list
 i=0
-def add_measurement_to_database(cur, room, temp, hum, light, dust, times):
-    cur.execute("INSERT INTO IoT.room(GPS_location,Temperature_Celsius,Humidity,Light,Dust,Air_Quality) "
+#insert data in database function
+def add_measurement_to_database(cur,room, temp, hum, light, dust, times):
+    cur.execute("INSERT INTO IoT.room(Room_number,Temperature_Celsius,Humidity,Light,Dust,Time_stamps) "
                 "VALUES (?,?,?,?,?,?)",(room,temp,hum,light,dust,times))
 
+#check database for room number based on MAC address
 def check_database(cur,m):
     cur.execute("SELECT CLASS FROM MAC WHERE Mac = '" + m + "';")
 
@@ -16,19 +18,19 @@ def check_database(cur,m):
     print(result)
 
     if result == None:
-        client.publish("group3/22/room_characteristics", "Class not found. Update Database. ")
+        client.publish("group3/22/room_characteristics", "None")
     else:
         client.publish("group3/22/room_characteristics", result_decode)
 
 
-
+#subscribe to topic mqtt
 def on_connect(client, userdata, flags, rc):
 
     client.subscribe("group3/22/room_characteristics")
     client.subscribe("group3/22/mac")
+    client.publish("group3/22/sync", "0")
 
-
-# The callback for when a PUBLISH message is received from the server
+#callback function when message is received/data list append
 def on_message(client, userdata, msg):
     topic1 = "group3/22/room_characteristics"
     topic2 = "group3/22/mac"
@@ -42,8 +44,8 @@ def on_message(client, userdata, msg):
             my_list.append(msg_strip)
             print(my_list)
         else:
-            add_measurement_to_database(cur, my_list[5], my_list[0], my_list[1] + ' °C', my_list[2] + ' %', my_list[3],
-                                        my_list[4] + ' pm')
+            add_measurement_to_database(cur, my_list[5], my_list[0] + ' °C', my_list[1] + ' %', my_list[2], my_list[3] + ' P/M',
+                                        my_list[4])
             my_list = []
             my_list.append(msg_strip)
     if msg.topic == topic2:
@@ -52,7 +54,7 @@ def on_message(client, userdata, msg):
         check_database(cur, msg_strip)
 
 
-# Connect to MariaDB Platform
+#mariadb connect
 try:
     conn = mariadb.connect(
         user="root",
@@ -65,10 +67,12 @@ try:
 except mariadb.Error as e:
     print(f"Error connecting to MariaDB Platform: {e}")
     sys.exit(1)
-# Get Cursor
+
+#get cursor and mqtt connect
 cur = conn.cursor()
 client = mqtt.Client()
 client.on_connect = on_connect
 client.on_message = on_message
-client.connect("test.mosquitto.org")
-client.loop_forever()
+client.connect("10.120.0.68", port=1883)
+while True:
+    client.loop()
