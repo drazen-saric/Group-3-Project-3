@@ -8,7 +8,7 @@
 const char* SSID = "ITEK 2nd";
 const char* Password = "Four_Sprints_F21v";
 
-const char* MQTT_Server = "broker.emqx.io";  //CHANGE TO LOCAL BROKER!!!
+const char* MQTT_Server = "10.120.0.68";
 const char* Sync = "group3/22/sync";
 
 //VPN Credentials
@@ -112,19 +112,10 @@ void connect_mqtt_initial() {
       Serial.println("Trying again in 2 Seconds...");
       delay(2000);
 
-      counter += 1;
-
-      if (counter == 2) {
-        counter = 0;
-        Serial.println("MQTT connect failed after 3 attempts, will atempt to connect later");
-        break;
-
-
-
-      }
     }
   }
 }
+
 
 void connect_mqtt() {
   int counter = 0;
