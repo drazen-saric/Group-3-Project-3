@@ -57,7 +57,10 @@ void loop() {
       delay(1000);
 
       PublishMsg("group3/22/sync", "Bad light conditions, entering sleep mode (20 min)");
+      delay(1000);
+
       esp_light_sleep_start();
+
       PublishMsg("group3/22/sync", "Exited sleep mode");
 
     }
@@ -84,18 +87,13 @@ void loop() {
 
       delay(MesureDelay * 1000);
 
-      //When all mesurements are collected, WiFi connection is confirmed and the data send is initiated
-      Serial.println("Restarting MQTT connection...");
-      Serial.println("");
-      PublishMsg("group3/22/sync", "Restarting MQTT connection...");
-      diconnect_mqtt();
       check_wifi();
 
       Serial.println("Cycle complete, waiting 5m before next cycle...");
       PublishMsg("group3/22/sync", "Cycle complete, waiting 5m before next cycle...");
-      
+
       delay(CycleTime * 60 * 1000);
-      
+
     }
 
 
