@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
     <meta charset="UTF-8">
     <meta name="viewpoint" content="width=device-width, initial-scale=1.0"/>
 </head>
 <style>
+
 .header {
   padding: 60px;
   text-align: center;
@@ -13,10 +13,12 @@
   background-repeat:no-repeat;
   color: white;
 }
+
 .navbar {
   display: flex;
   background-color: #400080;
 }
+
 .navbar a {
   color: white;
   padding: 14px 20px;
@@ -31,12 +33,14 @@
    color: white
 
 }
+
 table, th, td {
   border: 1px white;
   border-collapse: collapse;
   border-spacing: 20px ;
   padding: 10px;
 }
+
 th, td {
    font-size: 30px;
    font-family: Georgia;
@@ -45,10 +49,11 @@ th, td {
   margin-right: auto;
 }
 </style>
+
 <body style="background: radial-gradient(transparent, black); background-color:#e3b5e3; margin: 0">
 <div class="header">
   <h1>IS ROOM GUD?!</h1>
-  <p>lesgooo</p>
+  <p>Data updated every 5 minutes for the study room.</p>
 </div>
 <div class="navbar">
   <a href="https://imgur.com/ltbqhG3">Rooms layout</a>
