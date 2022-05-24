@@ -16,7 +16,7 @@ void LDS_read() {
     }
 
     //Calculate dust value
-    LDS_PM25 = (dustMsg[4] * 256) + dustMsg[5];
+    LDS_PM25 = (dustMsg[6] * 256) + dustMsg[7];
 
     Serial.println("");
     Serial.print("PM2.5 = ");
